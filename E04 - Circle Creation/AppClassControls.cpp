@@ -130,6 +130,9 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			}
 		}
 		break;
+	/*case sf::Keyboard::Up:
+		m_pMesh->GenerateCircle();
+		break;*/
 	}
 
 	//gui

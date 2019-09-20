@@ -1,4 +1,6 @@
 #include "MyMesh.h"
+#include <cmath>
+#include <iostream>
 void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
 {
 	Release();
@@ -16,6 +18,24 @@ void MyMesh::GenerateCircle(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 		Calculate a_nSubdivisions number of points around a center point in a radial manner
 		then call the AddTri function to generate a_nSubdivision number of faces
 	*/
+	glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lastLine = glm::vec3(0.0f, a_fRadius, 0.0f), currLine = glm::vec3(0.0f, a_fRadius, 0.0f);
+	float degreesBtwnSpokes = 360.0f / a_nSubdivisions;
+	std::cout << "" << degreesBtwnSpokes << std::endl;
+	std::cout << "-1: " << lastLine.x << " " << lastLine.y << " L=" << sqrt(lastLine.x * lastLine.x + lastLine.y * lastLine.y) << std::endl;
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		lastLine -= center;
+		currLine.x = lastLine.x * cos(degreesBtwnSpokes * (PI / 180.0f)) - lastLine.y * sin(degreesBtwnSpokes * (PI / 180.0f));
+		currLine.y = lastLine.y * cos(degreesBtwnSpokes * (PI / 180.0f)) + lastLine.x * sin(degreesBtwnSpokes * (PI / 180.0f));
+		lastLine += center;
+		currLine += center;
+		std::cout << "" << i << ": " << currLine.x << " " << currLine.y << " L=" << sqrt(currLine.x * currLine.x + currLine.y * currLine.y) << std::endl;
+		// Going from center to last line to new line should always be counterclockwise
+		AddTri(center, lastLine, currLine);
+		lastLine = currLine;
+		currLine = glm::vec3(0.0f, a_fRadius, 0.0f);
+	}
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -175,7 +195,7 @@ void MyMesh::AddTri(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3 a_vTo
 {
 	//C
 	//| \
-		//A--B
+	//A--B
 //This will make the triangle A->B->C 
 	AddVertexPosition(a_vBottomLeft);
 	AddVertexPosition(a_vBottomRight);
