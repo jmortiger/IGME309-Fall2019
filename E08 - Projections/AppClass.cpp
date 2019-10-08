@@ -45,6 +45,8 @@ void Application::Display(void)
 	//draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 
+	float zOffset;
+
 	//calculate view and projection
 	switch (m_uProjection)
 	{
@@ -54,12 +56,19 @@ void Application::Display(void)
 		break;
 	case 2:
 		m_pCamera->ResetCamera();
+		//Position & orientation looks identical to 1, it's just orthographic
+		m_pCamera->SetPerspective(false);
 		break;
 	case 3:
 		m_pCamera->ResetCamera();
+		zOffset = -5.0f;
+		m_pCamera->SetPositionTargetAndUpward(vector3(20.0f, 0.0f, zOffset), vector3(0, 0, zOffset), vector3(0.0f, 0.0f, -1.0f));
 		break;
 	case 4:
 		m_pCamera->ResetCamera();
+		//auto origProj = m_pCamera->GetProjectionMatrix();
+		//m_pCamera->SetPerspective(false);
+		//m_pCamera->SetNearFar(vector2(1000.0f, 0.001f));
 		break;
 	case 5:
 		m_pCamera->ResetCamera();
@@ -69,11 +78,30 @@ void Application::Display(void)
 		break;
 	case 7:
 		m_pCamera->ResetCamera();
+		m_pCamera->SetUp(vector3(0, -1.0f, 0));
 		break;
 	}
 
 	m_pCamera->CalculateProjectionMatrix();
 	m_pCamera->CalculateViewMatrix();
+	/*std::cout << "Projection Matrix: " << std::endl;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; i++)
+		{
+			std::cout << (m_pCamera->GetProjectionMatrix())[i][j];
+		}
+	}
+	std::cout << std::endl;
+	std::cout << "View Matrix: " << std::endl;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; i++)
+		{
+			std::cout << (m_pCamera->GetViewMatrix())[i][j];
+		}
+	}
+	std::cout << std::endl;*/
 
 	//draw the primitive
 	m_pMesh1->Render(m_pCamera, glm::rotate(IDENTITY_M4, 1.5708f, AXIS_X));
