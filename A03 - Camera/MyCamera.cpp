@@ -152,11 +152,66 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 
 void MyCamera::MoveForward(float a_fDistance)
 {
-	//The following is just an example and does not take in account the forward vector (AKA view vector)
-	m_v3Position += vector3(0.0f, 0.0f,-a_fDistance);
-	m_v3Target += vector3(0.0f, 0.0f, -a_fDistance);
-	m_v3Above += vector3(0.0f, 0.0f, -a_fDistance);
+	////The following is just an example and does not take in account the forward vector (AKA view vector)
+	//m_v3Position += vector3(0.0f, 0.0f, -a_fDistance);
+	//m_v3Target += vector3(0.0f, 0.0f, -a_fDistance);
+	//m_v3Above += vector3(0.0f, 0.0f, -a_fDistance);
+	// ************************************
+	// 1. Find the normalized forward vector
+	/*// TRY 1
+	// The forward vector should probably be the target, and dividing it by its length should normalize it
+	vector3 normFwd = m_v3Target / m_v3Target.length();*/
+	// TRY 2
+	// The forward vector appears to be stored in the view matrix, and dividing it by its length should normalize it
+	//vector3 normFwd = vector3(m_m4View[2], m_m4View[6], m_m4View[10]);
+	vector3 normFwd = vector3(m_m4View[2][0], m_m4View[2][1], m_m4View[2][2]);
+	normFwd /= normFwd.length();
+	// 2. Multiply the normalized fwd vec by the distance that should be traveled
+	// The normalized fwd vec should be solely direction, and the scalar distance should be magnitude
+	vector3 movementVec = normFwd * a_fDistance;
+	// 3. Offset the position, target, and above vectors by the movement vector
+	// Subtract b/c global fwd is -z
+	m_v3Position -= movementVec;
+	m_v3Target -= movementVec;
+	m_v3Above -= movementVec;
 }
 
-void MyCamera::MoveVertical(float a_fDistance){}//Needs to be defined
-void MyCamera::MoveSideways(float a_fDistance){}//Needs to be defined
+void MyCamera::MoveVertical(float a_fDistance)//Needs to be defined
+{
+	// 1. Find the normalized up vector
+	/*// TRY 1
+	// The up vector should probably be above, and dividing it by its length should normalize it
+	vector3 normUp = m_v3Above / m_v3Above.length();*/
+	// TRY 2
+	// The above vector appears to be stored in the view matrix, and dividing it by its length should normalize it
+	//vector3 normUp = vector3(m_m4View[1], m_m4View[5], m_m4View[9]);
+	vector3 normUp = vector3(m_m4View[1][0], m_m4View[1][1], m_m4View[1][2]);
+	normUp /= normUp.length();
+	// 2. Multiply the normalized up vec by the distance that should be traveled
+	// The normalized up vec should be solely direction, and the scalar distance should be magnitude
+	vector3 movementVec = normUp * a_fDistance;
+	// 3. Offset the position, target, and above vectors by the movement vector
+	m_v3Position += movementVec;
+	m_v3Target += movementVec;
+	m_v3Above += movementVec;
+}
+
+void MyCamera::MoveSideways(float a_fDistance)//Needs to be defined
+{
+	// 1. Find the normalized right vector
+	/*// TRY 1
+	// The right vector doesn't seem to be stored here, and dividing it by its length should normalize it
+	vector3 normRight = m_v3_ / m_v3_.length();*/
+	// TRY 2
+	// The above vector appears to be stored in the view matrix, and dividing it by its length should normalize it
+	//vector3 normRight = vector3(m_m4View[0], m_m4View[4], m_m4View[8]);
+	vector3 normRight = vector3(m_m4View[0][0], m_m4View[0][1], m_m4View[0][2]);
+	normRight /= normRight.length();
+	// 2. Multiply the normalized right vec by the distance that should be traveled
+	// The normalized right vec should be solely direction, and the scalar distance should be magnitude
+	vector3 movementVec = normRight * a_fDistance;
+	// 3. Offset the position, target, and above vectors by the movement vector
+	m_v3Position += movementVec;
+	m_v3Target += movementVec;
+	m_v3Above += movementVec;
+}

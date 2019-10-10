@@ -370,6 +370,16 @@ void Application::CameraRotation(float a_fSpeed)
 	}
 	//Change the Yaw and the Pitch of the camera
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
+	// ******************************
+	// Actually change the Yaw (left/right rotation) and Pitch (up/down rotation) of the camera
+	auto currPos = m_pCamera->GetPosition();
+	auto currTar = m_pCamera->GetTarget();
+	auto currUpw = m_pCamera->GetAbove();
+	/*if (fAngleX != 0)
+	{
+		
+	}*/
+	matrix4 rotMat = glm::yawPitchRoll(fAngleX, fAngleY, 0.0f);
 }
 //Keyboard
 void Application::ProcessKeyboard(void)
@@ -390,6 +400,11 @@ void Application::ProcessKeyboard(void)
 		m_pCamera->MoveForward(fSpeed);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		m_pCamera->MoveForward(-fSpeed);
+	// **********************************************
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		m_pCamera->MoveSideways(-fSpeed);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		m_pCamera->MoveSideways(fSpeed);
 #pragma endregion
 }
 //Joystick

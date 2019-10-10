@@ -39,6 +39,8 @@ void Application::Update(void)
 			m_pMyMeshMngr->AddConeToRenderList(glm::translate(vector3(i, 0.0f, j)));
 		}
 	}
+	// ************************************************
+	// Try checking for inputs
 }
 void Application::Display(void)
 {
