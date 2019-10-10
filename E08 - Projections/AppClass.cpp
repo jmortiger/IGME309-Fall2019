@@ -67,8 +67,8 @@ void Application::Display(void)
 	case 4:
 		m_pCamera->ResetCamera();
 		//auto origProj = m_pCamera->GetProjectionMatrix();
-		//m_pCamera->SetPerspective(false);
-		//m_pCamera->SetNearFar(vector2(1000.0f, 0.001f));
+		m_pCamera->SetPerspective(false);
+		m_pCamera->SetNearFar(vector2(1000.0f, 0.001f));
 		break;
 	case 5:
 		m_pCamera->ResetCamera();
