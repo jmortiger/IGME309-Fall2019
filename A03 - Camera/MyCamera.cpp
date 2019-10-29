@@ -203,7 +203,7 @@ void MyCamera::MoveSideways(float a_fDistance)//Needs to be defined
 	// The right vector doesn't seem to be stored here, and dividing it by its length should normalize it
 	vector3 normRight = m_v3_ / m_v3_.length();*/
 	// TRY 2
-	// The above vector appears to be stored in the view matrix, and dividing it by its length should normalize it
+	// The right vector appears to be stored in the view matrix, and dividing it by its length should normalize it
 	//vector3 normRight = vector3(m_m4View[0], m_m4View[4], m_m4View[8]);
 	vector3 normRight = vector3(m_m4View[0][0], m_m4View[0][1], m_m4View[0][2]);
 	normRight /= normRight.length();

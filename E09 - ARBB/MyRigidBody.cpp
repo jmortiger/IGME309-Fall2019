@@ -85,8 +85,41 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	m_m4ToWorld = a_m4ModelMatrix;
 	
 	//your code goes here---------------------
-	m_v3MinG = m_v3MinL;
-	m_v3MaxG = m_v3MaxL;
+	// 1) Find the 8 corners of the Oriented Bounding Box
+	// A. They are in local space, globalize them
+	vector3 corners[8] = {
+		m_v3MinL,
+		vector3(m_m4ToWorld * vector4(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z, 1)),
+		vector3(m_m4ToWorld * vector4(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z, 1)),
+		vector3(m_m4ToWorld * vector4(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z, 1)),
+		vector3(m_m4ToWorld * vector4(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z, 1)),
+		vector3(m_m4ToWorld * vector4(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z, 1)),
+		vector3(m_m4ToWorld * vector4(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z, 1)),
+		m_v3MaxL
+	};
+	// Find the max and min for the corners
+	vector3 currMin = corners[0], currMax = corners[0];
+	for (int i = 0; i < corners->length(); i++)
+	{
+		// Check if the current max is smaller than the current checked val
+		if (currMax.x < corners[i].x)
+			currMax.x = corners[i].x;
+		if (currMax.y < corners[i].y)
+			currMax.y = corners[i].y;
+		if (currMax.z < corners[i].z)
+			currMax.z = corners[i].z;
+		// Check if the current min is larger than the current checked val
+		if (currMin.x < corners[i].x)
+			currMin.x = corners[i].x;
+		if (currMin.y < corners[i].y)
+			currMin.y = corners[i].y;
+		if (currMin.z < corners[i].z)
+			currMin.z = corners[i].z;
+	}
+	m_v3MinG = currMin;
+	m_v3MaxG = currMax;
+	/*m_v3MinG = m_v3MinL;
+	m_v3MaxG = m_v3MaxL;*/
 	//----------------------------------------
 
 	//we calculate the distance between min and max vectors

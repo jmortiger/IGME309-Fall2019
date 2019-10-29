@@ -379,7 +379,27 @@ void Application::CameraRotation(float a_fSpeed)
 	{
 		
 	}*/
-	matrix4 rotMat = glm::yawPitchRoll(fAngleX, fAngleY, 0.0f);
+	// It would appear that the y is the x
+	float fAngleXTemp = fAngleX;
+	fAngleX = glm::radians(fAngleY);
+	fAngleY = glm::radians(fAngleXTemp);
+	matrix4 yawYPitchX = glm::yawPitchRoll(fAngleY, fAngleX, 0.0f);
+	matrix4 pitchX = glm::yawPitchRoll(0.0f, fAngleX, 0.0f);
+	matrix4 yawX = glm::yawPitchRoll(fAngleX, 0.0f, 0.0f);
+	matrix4 pitchY = glm::yawPitchRoll(0.0f, fAngleY, 0.0f);
+	matrix4 yawY = glm::yawPitchRoll(fAngleY, 0.0f, 0.0f);
+	matrix4 rollY = glm::yawPitchRoll(0.0f, 0.0f, fAngleY);
+	//matrix4 rotMat1 = glm::yawPitchRoll(fAngleX, fAngleY, 0.0f);
+	//matrix4 rotMat2 = glm::yawPitchRoll(/*fAngleX*/0.0f, fAngleY, 0.0f);
+	matrix4 rotMat1 = glm::yawPitchRoll(fAngleX, fAngleY, 0.0f);
+	matrix4 rotMat2 = glm::yawPitchRoll(fAngleX, /*fAngleY*/0.0f, 0.0f);
+	//matrix4 rotMat1 = glm::yawPitchRoll(0.0f, fAngleY, /*fAngleX*/0.0f);
+	//matrix4 rotMat2 = glm::yawPitchRoll(0.0f, fAngleY, /*fAngleX*/0.0f);
+	auto tarTarget = rotMat1/*yawY*/ * vector4(currTar, 0.0f);
+	auto tarUpw = rotMat2 * vector4(currUpw, 0.0f);
+	m_pCamera->SetPositionTargetAndUpward(currPos, vector3(tarTarget), vector3(tarUpw));
+	m_pCamera->CalculateProjectionMatrix();
+	m_pCamera->CalculateViewMatrix();
 }
 //Keyboard
 void Application::ProcessKeyboard(void)
