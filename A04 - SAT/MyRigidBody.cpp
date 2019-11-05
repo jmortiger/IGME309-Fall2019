@@ -286,6 +286,235 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	Simplex that might help you [eSATResults] feel free to use it.
 	(eSATResults::SAT_NONE has a value of 0)
 	*/
+	// vector3 
+	// 	myCenterGlobal = this->GetCenterGlobal(),
+	// 	otCenterGlobal = a_pOther->GetCenterGlobal(),
+	// 	myHalfX = vector3(this->m_v3HalfWidth.x, 0, 0),
+	// 	myHalfY = vector3(0, this->m_v3HalfWidth.y, 0),
+	// 	myHalfZ = vector3(0, 0, this->m_v3HalfWidth.z),
+	// 	otHalfX = vector3(a_pOther->m_v3HalfWidth.x, 0, 0),
+	// 	otHalfY = vector3(0, a_pOther->m_v3HalfWidth.y, 0),
+	// 	otHalfZ = vector3(0, 0, a_pOther->m_v3HalfWidth.z)
+	// 	,
+	// 	myRigTopFwd = myCenterGlobal + myHalfX + myHalfY + myHalfZ,
+	// 	myRigTopBac = myCenterGlobal + myHalfX + myHalfY - myHalfZ,
+	// 	myRigBtmBac = myCenterGlobal + myHalfX - myHalfY - myHalfZ,
+	// 	myRigBtmFwd = myCenterGlobal + myHalfX - myHalfY + myHalfZ,
+	// 	myLefBtmBac = myCenterGlobal - myHalfX - myHalfY - myHalfZ,
+	// 	myLefTopFwd = myCenterGlobal - myHalfX + myHalfY + myHalfZ,
+	// 	myLefBtmFwd = myCenterGlobal - myHalfX - myHalfY + myHalfZ,
+	// 	myLefTopBac = myCenterGlobal - myHalfX + myHalfY - myHalfZ,
+	// 	otRigTopFwd = otCenterGlobal + otHalfX + otHalfY + otHalfZ,
+	// 	otRigTopBac = otCenterGlobal + otHalfX + otHalfY - otHalfZ,
+	// 	otRigBtmBac = otCenterGlobal + otHalfX - otHalfY - otHalfZ,
+	// 	otRigBtmFwd = otCenterGlobal + otHalfX - otHalfY + otHalfZ,
+	// 	otLefBtmBac = otCenterGlobal - otHalfX - otHalfY - otHalfZ,
+	// 	otLefTopFwd = otCenterGlobal - otHalfX + otHalfY + otHalfZ,
+	// 	otLefBtmFwd = otCenterGlobal - otHalfX - otHalfY + otHalfZ,
+	// 	otLefTopBac = otCenterGlobal - otHalfX + otHalfY - otHalfZ
+	// 	;
+	// vector3 myCorners[8]{
+	// 	myCenterGlobal + myHalfX + myHalfY + myHalfZ,
+	// 	myCenterGlobal + myHalfX + myHalfY - myHalfZ,
+	// 	myCenterGlobal + myHalfX - myHalfY - myHalfZ,
+	// 	myCenterGlobal + myHalfX - myHalfY + myHalfZ,
+	// 	myCenterGlobal - myHalfX - myHalfY - myHalfZ,
+	// 	myCenterGlobal - myHalfX + myHalfY + myHalfZ,
+	// 	myCenterGlobal - myHalfX - myHalfY + myHalfZ,
+	// 	myCenterGlobal - myHalfX + myHalfY - myHalfZ
+	// };
+	//
+	//vector3
+	//	myCorners[8]{
+	//		myCenterGlobal + myHalfX + myHalfY + myHalfZ,
+	//		myCenterGlobal + myHalfX + myHalfY - myHalfZ,
+	//		myCenterGlobal + myHalfX - myHalfY - myHalfZ,
+	//		myCenterGlobal + myHalfX - myHalfY + myHalfZ,
+	//		myCenterGlobal - myHalfX - myHalfY - myHalfZ,
+	//		myCenterGlobal - myHalfX + myHalfY + myHalfZ,
+	//		myCenterGlobal - myHalfX - myHalfY + myHalfZ,
+	//		myCenterGlobal - myHalfX + myHalfY - myHalfZ
+	//	},
+	//	otCorners[8]{
+	//		otCenterGlobal + otHalfX + otHalfY + otHalfZ,
+	//		otCenterGlobal + otHalfX + otHalfY - otHalfZ,
+	//		otCenterGlobal + otHalfX - otHalfY - otHalfZ,
+	//		otCenterGlobal + otHalfX - otHalfY + otHalfZ,
+	//		otCenterGlobal - otHalfX - otHalfY - otHalfZ,
+	//		otCenterGlobal - otHalfX + otHalfY + otHalfZ,
+	//		otCenterGlobal - otHalfX - otHalfY + otHalfZ,
+	//		otCenterGlobal - otHalfX + otHalfY - otHalfZ
+	//	};
+	//vector3
+	//	myMinX = glm::cross(myCorners[0], myCenterGlobal - myHalfX),
+	//	myMinY = glm::cross(myCorners[0], myCenterGlobal - myHalfY),
+	//	myMinZ = glm::cross(myCorners[0], myCenterGlobal - myHalfZ),
+	//	myMaxX = glm::cross(myCorners[0], myCenterGlobal - myHalfX),
+	//	myMaxY = glm::cross(myCorners[0], myCenterGlobal - myHalfY),
+	//	myMaxZ = glm::cross(myCorners[0], myCenterGlobal - myHalfZ),
+	//	otMinX = glm::cross(otCorners[0], otHalfX),
+	//	otMinY = glm::cross(otCorners[0], otHalfY),
+	//	otMinZ = glm::cross(otCorners[0], otHalfZ),
+	//	otMaxX = glm::cross(otCorners[0], otHalfX),
+	//	otMaxY = glm::cross(otCorners[0], otHalfY),
+	//	otMaxZ = glm::cross(otCorners[0], otHalfZ);
+	// float t = glm::cross(myCorners[0], myHalfX),
+	// 	myMinX = 0.0f,
+	// 	myMinY = 0.0f,
+	// 	myMinZ = 0.0f,
+	// 	myMaxX = 0.0f,
+	// 	myMaxY = 0.0f,
+	// 	myMaxZ = 0.0f,
+	// 	otMinX = 0.0f,
+	// 	otMinY = 0.0f,
+	// 	otMinZ = 0.0f,
+	// 	otMaxX = 0.0f,
+	// 	otMaxY = 0.0f,
+	// 	otMaxZ = 0.0f;
+	// Projections
+	// for (int i = 0; i < 8; i++)
+	// {
+	// 	vector3 temp = glm::cross(myCorners[i], myHalfX);
+	// 	if (temp.length() < myMinX.length())
+	// 		myMinX = temp;
+	// 	if (temp.length() > myMaxX.length())
+	// 		myMaxX = temp;
+	// 	temp = glm::cross(myCorners[i], myHalfY);
+	// 	if (temp.length() < myMinY.length())
+	// 		myMinY = temp;
+	// 	if (temp.length() > myMaxY.length())
+	// 		myMaxY = temp;
+	// 	temp = glm::cross(myCorners[i], myHalfZ);
+	// 	if (temp.length() < myMinZ.length())
+	// 		myMinZ = temp;
+	// 	if (temp.length() > myMaxZ.length())
+	// 		myMaxZ = temp;
+	// 	// Other
+	// 	temp = glm::cross(otCorners[i], otHalfX);
+	// 	if (temp.length() < otMinX.length())
+	// 		otMinX = temp;
+	// 	if (temp.length() > otMaxX.length())
+	// 		otMaxX = temp;
+	// 	temp = glm::cross(otCorners[i], otHalfY);
+	// 	if (temp.length() < otMinY.length())
+	// 		otMinY = temp;
+	// 	if (temp.length() > otMaxY.length())
+	// 		otMaxY = temp;
+	// 	temp = glm::cross(otCorners[i], otHalfZ);
+	// 	if (temp.length() < otMinZ.length())
+	// 		otMinZ = temp;
+	// 	if (temp.length() > otMaxZ.length())
+	// 		otMaxZ = temp;
+	// }
+	
+	vector3 
+		myCenterGlobal = this->GetCenterGlobal(),
+		otCenterGlobal = a_pOther->GetCenterGlobal(),
+		myHalfX = vector3(this->m_v3HalfWidth.x, 0, 0),
+		myHalfY = vector3(0, this->m_v3HalfWidth.y, 0),
+		myHalfZ = vector3(0, 0, this->m_v3HalfWidth.z),
+		otHalfX = vector3(a_pOther->m_v3HalfWidth.x, 0, 0),
+		otHalfY = vector3(0, a_pOther->m_v3HalfWidth.y, 0),
+		otHalfZ = vector3(0, 0, a_pOther->m_v3HalfWidth.z)/*,
+		myRigTopFwd = myCenterGlobal + myHalfX + myHalfY + myHalfZ,
+		myRigTopBac = myCenterGlobal + myHalfX + myHalfY - myHalfZ,
+		myRigBtmBac = myCenterGlobal + myHalfX - myHalfY - myHalfZ,
+		myRigBtmFwd = myCenterGlobal + myHalfX - myHalfY + myHalfZ,
+		myLefBtmBac = myCenterGlobal - myHalfX - myHalfY - myHalfZ,
+		myLefTopFwd = myCenterGlobal - myHalfX + myHalfY + myHalfZ,
+		myLefBtmFwd = myCenterGlobal - myHalfX - myHalfY + myHalfZ,
+		myLefTopBac = myCenterGlobal - myHalfX + myHalfY - myHalfZ,*/
+		/*otRigTopFwd = otCenterGlobal + otHalfX + otHalfY + otHalfZ,
+		otRigTopBac = otCenterGlobal + otHalfX + otHalfY - otHalfZ,
+		otRigBtmBac = otCenterGlobal + otHalfX - otHalfY - otHalfZ,
+		otRigBtmFwd = otCenterGlobal + otHalfX - otHalfY + otHalfZ,
+		otLefBtmBac = otCenterGlobal - otHalfX - otHalfY - otHalfZ,
+		otLefTopFwd = otCenterGlobal - otHalfX + otHalfY + otHalfZ,
+		otLefBtmFwd = otCenterGlobal - otHalfX - otHalfY + otHalfZ,
+		otLefTopBac = otCenterGlobal - otHalfX + otHalfY - otHalfZ*/;
+
+	vector3
+		myCorners[8]{
+			myCenterGlobal + myHalfX + myHalfY + myHalfZ,
+			myCenterGlobal + myHalfX + myHalfY - myHalfZ,
+			myCenterGlobal + myHalfX - myHalfY - myHalfZ,
+			myCenterGlobal + myHalfX - myHalfY + myHalfZ,
+			myCenterGlobal - myHalfX - myHalfY - myHalfZ,
+			myCenterGlobal - myHalfX + myHalfY + myHalfZ,
+			myCenterGlobal - myHalfX - myHalfY + myHalfZ,
+			myCenterGlobal - myHalfX + myHalfY - myHalfZ
+		},
+		otCorners[8]{
+			otCenterGlobal + otHalfX + otHalfY + otHalfZ,
+			otCenterGlobal + otHalfX + otHalfY - otHalfZ,
+			otCenterGlobal + otHalfX - otHalfY - otHalfZ,
+			otCenterGlobal + otHalfX - otHalfY + otHalfZ,
+			otCenterGlobal - otHalfX - otHalfY - otHalfZ,
+			otCenterGlobal - otHalfX + otHalfY + otHalfZ,
+			otCenterGlobal - otHalfX - otHalfY + otHalfZ,
+			otCenterGlobal - otHalfX + otHalfY - otHalfZ
+		};
+	vector3 /*t = glm::cross(myCorners[0], myHalfX),*/
+		myMinX = glm::cross(myCorners[0], myCenterGlobal - myHalfX),
+		myMinY = glm::cross(myCorners[0], myCenterGlobal - myHalfY),
+		myMinZ = glm::cross(myCorners[0], myCenterGlobal - myHalfZ),
+		myMaxX = glm::cross(myCorners[0], myCenterGlobal - myHalfX),
+		myMaxY = glm::cross(myCorners[0], myCenterGlobal - myHalfY),
+		myMaxZ = glm::cross(myCorners[0], myCenterGlobal - myHalfZ),
+		otMinX = glm::cross(otCorners[0], otHalfX),
+		otMinY = glm::cross(otCorners[0], otHalfY),
+		otMinZ = glm::cross(otCorners[0], otHalfZ),
+		otMaxX = glm::cross(otCorners[0], otHalfX),
+		otMaxY = glm::cross(otCorners[0], otHalfY),
+		otMaxZ = glm::cross(otCorners[0], otHalfZ);
+	/*float t = glm::cross(myCorners[0], myHalfX),
+		myMinX = 0.0f,
+		myMinY = 0.0f,
+		myMinZ = 0.0f,
+		myMaxX = 0.0f,
+		myMaxY = 0.0f,
+		myMaxZ = 0.0f,
+		otMinX = 0.0f,
+		otMinY = 0.0f,
+		otMinZ = 0.0f,
+		otMaxX = 0.0f,
+		otMaxY = 0.0f,
+		otMaxZ = 0.0f;*/
+	// Projections
+	for (int i = 0; i < 8; i++)
+	{
+		vector3 temp = glm::cross(myCorners[i], myHalfX);
+		if (temp.length() < myMinX.length())
+			myMinX = temp;
+		if (temp.length() > myMaxX.length())
+			myMaxX = temp;
+		temp = glm::cross(myCorners[i], myHalfY);
+		if (temp.length() < myMinY.length())
+			myMinY = temp;
+		if (temp.length() > myMaxY.length())
+			myMaxY = temp;
+		temp = glm::cross(myCorners[i], myHalfZ);
+		if (temp.length() < myMinZ.length())
+			myMinZ = temp;
+		if (temp.length() > myMaxZ.length())
+			myMaxZ = temp;
+		// Other
+		temp = glm::cross(otCorners[i], otHalfX);
+		if (temp.length() < otMinX.length())
+			otMinX = temp;
+		if (temp.length() > otMaxX.length())
+			otMaxX = temp;
+		temp = glm::cross(otCorners[i], otHalfY);
+		if (temp.length() < otMinY.length())
+			otMinY = temp;
+		if (temp.length() > otMaxY.length())
+			otMaxY = temp;
+		temp = glm::cross(otCorners[i], otHalfZ);
+		if (temp.length() < otMinZ.length())
+			otMinZ = temp;
+		if (temp.length() > otMaxZ.length())
+			otMaxZ = temp;
+	}
 
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE;
